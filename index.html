@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SiS's Photography | 个人摄影集</title>
+    <!-- 引入 Tailwind CSS 样式库 -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        /* 隐藏滚动条 */
+        ::-webkit-scrollbar { display: none; }
+        .masonry { column-count: 1; column-gap: 1.5rem; }
+        @media (min-width: 640px) { .masonry { column-count: 2; } }
+        @media (min-width: 1024px) { .masonry { column-count: 3; } }
+    </style>
+</head>
+<body class="bg-white text-gray-900 font-sans antialiased selection:bg-gray-100">
+
+    <!-- 顶部导航栏 -->
+    <nav class="fixed top-0 left-0 w-full z-40 bg-white/80 backdrop-blur-md px-6 py-4 flex justify-between items-center border-b border-gray-50">
+        <span class="text-sm font-semibold tracking-wider uppercase cursor-pointer" onclick="showSection('home')">OUOU's Photography</span>
+        <div class="flex gap-6 text-sm font-medium text-gray-500">
+            <button onclick="showSection('works')" class="hover:text-black transition cursor-pointer">Works</button>
+            <button onclick="showSection('about')" class="hover:text-black transition cursor-pointer">About</button>
+        </div>
+    </nav>
+
+    <!-- ================= 1. 首页封面 (Home Section) ================= -->
+    <section id="home-section" class="pt-24 min-h-screen flex flex-col justify-center px-6 lg:px-20">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <!-- 左侧大标题 -->
+            <div class="lg:col-span-5 space-y-6">
+                <span class="text-[10px] tracking-[0.2em] text-gray-400 font-mono uppercase bg-gray-50 px-2 py-1 rounded">ESTABLISHED / 2026</span>
+                <h1 class="text-5xl lg:text-7xl font-black tracking-tighter uppercase leading-[0.9]">
+                    OUOU's<br><span class="text-gray-400">PHOTO-</span><br>GRAPHY
+                </h1>
+                <div class="pt-4">
+                    <button onclick="showSection('works')" class="group flex items-center gap-4 text-xs font-semibold tracking-widest uppercase text-gray-400 hover:text-black transition cursor-pointer">
+                        ENTER GALLERY <span class="w-12 h-[1px] bg-gray-300 group-hover:w-20 group-hover:bg-black transition-all"></span>
+                    </button>
+                </div>
+            </div>
+            <!-- 右侧拼贴图（参考 image_36e307.png 的排版） -->
+            <div class="lg:col-span-7 grid grid-cols-2 gap-4 h-[70vh] opacity-90">
+                <div class="space-y-4">
+                    <img src="https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=600&q=80" class="w-full h-[60%] object-cover rounded-sm shadow-sm" alt="拼贴1">
+                    <img src="https://images.unsplash.com/photo-1475924156734-496f6cac6ec1?auto=format&fit=crop&w=600&q=80" class="w-full h-[35%] object-cover rounded-sm shadow-sm" alt="拼贴2">
+                </div>
+                <div class="space-y-4 pt-12">
+                    <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=600&q=80" class="w-full h-[40%] object-cover rounded-sm shadow-sm" alt="拼贴3">
+                    <img src="https://images.unsplash.com/photo-1501854140801-50d01698950b?auto=format&fit=crop&w=600&q=80" class="w-full h-[53%] object-cover rounded-sm shadow-sm" alt="拼贴4">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= 2. 作品列表页 (Works Section) ================= -->
+    <section id="works-section" class="hidden pt-28 px-6 lg:px-16 min-h-screen">
+        <!-- 分类过滤器 -->
+        <div class="flex flex-col items-center gap-4 mb-12">
+            <!-- 城市分类 -->
+            <div id="city-filters" class="flex gap-6 text-xs font-medium tracking-wide text-gray-400">
+                <!-- 动态生成 -->
+            </div>
+            <!-- 题材标签 -->
+            <div id="tag-filters" class="flex gap-2 text-[11px]">
+                <!-- 动态生成 -->
+            </div>
+        </div>
+
+        <!-- 作品瀑布流 -->
+        <div id="works-grid" class="masonry max-w-7xl mx-auto">
+            <!-- 动态生成卡片 -->
+        </div>
+    </section>
+
+    <!-- ================= 3. 关于页面 (About Section) ================= -->
+    <section id="about-section" class="hidden pt-28 px-6 max-w-2xl mx-auto text-center min-h-screen flex flex-col justify-center space-y-6">
+        <h2 class="text-2xl font-bold">关于摄影师</h2>
+        <p class="text-gray-500 text-sm leading-relaxed">
+            这里是SiS的摄影空间。记录城市里流动的光影，捕捉风与时间的瞬间。基于 Nikon Z5II、Canon M50 及 iPhone 创作。
+        </p>
+    </section>
+
+    <!-- ================= 4. 详情侧边栏灯箱 (Detail Lightbox) ================= -->
+    <div id="lightbox" class="fixed inset-0 z-50 bg-white hidden flex flex-col md:flex-row">
+        <!-- 关闭按钮 -->
+        <button onclick="closeLightbox()" class="absolute top-6 right-6 text-xl text-gray-400 hover:text-black z-50 cursor-pointer">✕</button>
+        
+        <!-- 左侧/中间：照片展示区 -->
+        <div class="flex-1 bg-gray-50 flex items-center justify-center p-6 md:p-12 h-[65vh] md:h-full">
+            <img id="lightbox-img" src="" class="max-w-full max-h-full object-contain shadow-md rounded-sm" alt="大图">
+        </div>
+        
+        <!-- 右侧：作品参数面板 (复刻自图片设计) -->
+        <div class="w-full md:w-[380px] border-t md:border-t-0 md:border-l border-gray-100 p-8 flex flex-col justify-center bg-white h-[35vh] md:h-full">
+            <h3 id="lightbox-title" class="text-xl font-bold mb-8">作品名称</h3>
+            
+            <div class="space-y-4 text-xs">
+                <div>
+                    <span class="block text-[10px] font-mono tracking-widest text-gray-400 uppercase mb-0.5">LOCATION</span>
+                    <span id="lightbox-location" class="text-gray-800 font-medium">北京 / 颐和园</span>
+                </div>
+                <div>
+                    <span class="block text-[10px] font-mono tracking-widest text-gray-400 uppercase mb-0.5">EQUIPMENT</span>
+                    <span id="lightbox-equipment" class="text-gray-600 font-mono">富士X-M5</span>
+                </div>
+                <div>
+                    <span class="block text-[10px] font-mono tracking-widest text-gray-400 uppercase mb-0.5">CAPTURED ON</span>
+                    <span id="lightbox-date" class="text-gray-600 font-mono">2026-12-14</span>
+                </div>
+                <div>
+                    <span class="block text-[10px] font-mono tracking-widest text-gray-400 uppercase mb-0.5">TAGS</span>
+                    <span id="lightbox-tag" class="inline-block mt-1 bg-gray-50 text-[10px] text-gray-500 px-2 py-0.5 rounded border border-gray-100">风景</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= 核心逻辑与摄影数据配置 ================= -->
+    <script>
+        // 📸 【你的摄影照片数据库】—— 在这里直接添加或修改你的作品！
+        const photoData = [
+            {
+                title: "门中门",
+                city: "北京",
+                location: "北京 / 天坛",
+                equipment: "iPhone 15 Pro",
+                date: "2026-01-10",
+                tag: "建筑",
+                img: "https://images.unsplash.com/photo-1547981609-4b6bfe67ca0b?auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                title: "瑞雪兆丰年",
+                city: "北京",
+                location: "北京 / 颐和园",
+                equipment: "富士 X-M5",
+                date: "2025-12-14",
+                tag: "风景",
+                img: "https://images.unsplash.com/photo-1499002238440-d264edd596ec?auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                title: "中山纪念公园",
+                city: "香港",
+                location: "香港 / 西营盘 中山纪念公园",
+                equipment: "富士 X-M5",
+                date: "2026-03-22",
+                tag: "建筑",
+                img: "https://images.unsplash.com/photo-1518156677180-95a2893f3e9f?auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                title: "周日的狂欢",
+                city: "香港",
+                location: "香港 / 中环",
+                equipment: "富士 X-M5",
+                date: "2026-04-05",
+                tag: "街头",
+                img: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                title: "经幡里的雪山",
+                city: "阿坝州",
+                location: "阿坝州 / 松潘 雪宝顶",
+                equipment: "富士 X-M5",
+                date: "2025-10-02",
+                tag: "风景",
+                img: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                title: "胡同里",
+                city: "北京",
+                location: "北京 / 什刹海",
+                equipment: "富士 X-M5",
+                date: "2026-02-18",
+                tag: "纪实",
+                img: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80"
+            }
+        ];
+
+        let currentCity = '全部城市';
+        let currentTag = '全部题材';
+
+        // 切换页面板块
+        function showSection(sectionId) {
+            document.getElementById('home-section').classList.add('hidden');
+            document.getElementById('works-section').classList.add('hidden');
+            document.getElementById('about-section').classList.add('hidden');
+            document.getElementById(`${sectionId}-section`).classList.remove('hidden');
+            window.scrollTo(0, 0);
+            if(sectionId === 'works') renderWorks();
+        }
+
+        // 初始化分类过滤器
+        function initFilters() {
+            const cities = ['全部城市', ...new Set(photoData.map(item => item.city))];
+            const tags = ['全部题材', ...new Set(photoData.map(item => item.tag))];
+
+            const cityContainer = document.getElementById('city-filters');
+            cityContainer.innerHTML = cities.map(c => `
+                <button onclick="filterCity('${c}')" class="filter-city-btn cursor-pointer transition ${c === currentCity ? 'text-black font-bold border-b border-black pb-0.5' : 'hover:text-black'}">${c}</button>
+            `).join('');
+
+            const tagContainer = document.getElementById('tag-filters');
+            tagContainer.innerHTML = tags.map(t => `
+                <button onclick="filterTag('${t}')" class="filter-tag-btn cursor-pointer px-4 py-1 rounded-full border transition ${t === currentTag ? 'bg-black text-white border-black' : 'bg-white text-gray-500 border-gray-200 hover:border-gray-400'}"># ${t}</button>
+            `).join('');
+        }
+
+        function filterCity(city) { currentCity = city; initFilters(); renderWorks(); }
+        function filterTag(tag) { currentTag = tag; initFilters(); renderWorks(); }
+
+        // 渲染作品列表
+        function renderWorks() {
+            const grid = document.getElementById('works-grid');
+            
+            const filtered = photoData.filter(item => {
+                const matchCity = currentCity === '全部城市' || item.city === currentCity;
+                const matchTag = currentTag === '全部题材' || item.tag === currentTag;
+                return matchCity && matchTag;
+            });
+
+            grid.innerHTML = filtered.map((item, index) => `
+                <div class="break-inside-avoid mb-8 group cursor-pointer" onclick="openLightbox(${JSON.stringify(item).replace(/"/g, '&quot;')})">
+                    <div class="overflow-hidden bg-gray-50 rounded-sm mb-3">
+                        <img src="${item.img}" class="w-full h-auto object-cover opacity-95 group-hover:opacity-100 group-hover:scale-[1.01] transition-all duration-500" loading="lazy">
+                    </div>
+                    <div class="flex justify-between items-baseline px-1">
+                        <h4 class="text-xs font-semibold text-gray-800">${item.title}</h4>
+                        <span class="text-[10px] text-gray-400">${item.location.split(' / ')[1] || item.city}</span>
+                    </div>
+                    <span class="block px-1 text-[9px] font-mono text-gray-400 mt-0.5 uppercase">${item.equipment}</span>
+                </div>
+            `).join('');
+        }
+
+        // 打开大图和参数详情面板
+        function openLightbox(item) {
+            document.getElementById('lightbox-img').src = item.img;
+            document.getElementById('lightbox-title').innerText = item.title;
+            document.getElementById('lightbox-location').innerText = item.location;
+            document.getElementById('lightbox-equipment').innerText = item.equipment;
+            document.getElementById('lightbox-date').innerText = item.date;
+            document.getElementById('lightbox-tag').innerText = item.tag;
+            
+            const lb = document.getElementById('lightbox');
+            lb.classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // 禁止底页滚动
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        // 首次初始化
+        initFilters();
+    </script>
+</body>
+</html>
